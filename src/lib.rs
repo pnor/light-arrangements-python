@@ -1,11 +1,18 @@
+mod light_arrangement_thread;
+mod util;
+
 use led_arrangements::{
-    self, ArrangementConfig, ArrangementConfigError, LightConfig, LightStrip,
-    TestStripDisplayConfig, Ws281xStrip,
+    self, strip_builder, ArrangementConfig, ArrangementConfigError, Color, LightConfig, LightStrip,
+    Loc, TestStripDisplayConfig, Ws281xStrip,
 };
 use led_arrangements::{LightArrangement, TestStrip};
+use light_arrangement_thread::LightArrangementThread;
 use pyo3::exceptions::PyValueError;
-use pyo3::impl_::pyfunction;
 use pyo3::prelude::*;
+use util::{color_to_tuple, vec_to_array};
+
+//static LIGHT_ARRANGEMENT_SINGLETON: Mutex<Arc<LightArrangementSingleton>> =
+//    Mutex::new(LightArrangementSingleton::None);
 
 // Let there be multiple
 // but try to keep it in Rust
@@ -32,7 +39,12 @@ use pyo3::prelude::*;
 enum LightArrangementTypes {
     Test1D(LightArrangement<TestStrip, 1>),
     Test2D(LightArrangement<TestStrip, 2>),
-    None,
+    Test3D(LightArrangement<TestStrip, 3>),
+    Test4D(LightArrangement<TestStrip, 4>),
+    Ws281x1D(LightArrangementThread<1>),
+    Ws281x2D(LightArrangementThread<2>),
+    Ws281x3D(LightArrangementThread<3>),
+    Ws281x4D(LightArrangementThread<4>),
 }
 
 #[pyclass]
@@ -74,7 +86,7 @@ fn init_test(
                 input_file,
             )?;
             return Ok(PyLightArrangement {
-                light_arr_enum: LightArrangementTypes::Test1D(test_arrangement),
+                light_arr_enum: LightArrangementTypes::Test1d(test_arrangement),
             });
         }
         2 => {
@@ -86,7 +98,106 @@ fn init_test(
                 light_arr_enum: LightArrangementTypes::Test2D(test_arrangement),
             });
         }
-        _ => Err(PyValueError::new_err("Dimension number must be 1, 2, or 3")),
+        3 => {
+            let test_arrangement = create_test_arrangement::<3>(
+                TestStripDisplayConfig::new(sphere_size, camera_start, dimension_mask),
+                input_file,
+            )?;
+            return Ok(PyLightArrangement {
+                light_arr_enum: LightArrangementTypes::Test2D(test_arrangement),
+            });
+        }
+        4 => {
+            let test_arrangement = create_test_arrangement::<4>(
+                TestStripDisplayConfig::new(sphere_size, camera_start, dimension_mask),
+                input_file,
+            )?;
+            return Ok(PyLightArrangement {
+                light_arr_enum: LightArrangementTypes::Test2D(test_arrangement),
+            });
+        }
+        _ => Err(PyValueError::new_err(
+            "Dimension number must be 1, 2, 3, or 4",
+        )),
+    }
+}
+
+fn init_ws281x(
+    number_dimensions: usize,
+    input_file: String,
+    number_lights: i32,
+    io_pin: i32,
+) -> PyResult<PyLightArrangement> {
+    match number_dimensions {
+        1 => {
+            let strip = strip_builder::ws281x(config);
+            let light_arr_threading =
+                LightArrangementThread::new(strip, input_file, number_lights, io_pin);
+            return Ok(PyLightArrangement {
+                light_arr_enum: LightArrangementTypes::Ws281x1D(light_arr_threading),
+            });
+        }
+        2 => {
+            let config = LightConfig::new(number_lights, io_pin);
+            let strip = strip_builder::ws281x(config);
+            let arrangement = to_pyresult(ArrangementConfig::<2>::from_csv(&input_file))?;
+            return Ok(PyLightArrangement {
+                light_arr_enum: LightArrangementTypes::Ws281x2D(strip),
+            });
+        }
+        3 => {
+            let config = LightConfig::new(number_lights, io_pin);
+            let strip = strip_builder::ws281x(config);
+            let arrangement = to_pyresult(ArrangementConfig::<3>::from_csv(&input_file))?;
+            return Ok(PyLightArrangement {
+                light_arr_enum: LightArrangementTypes::Ws281x3D(strip),
+            });
+        }
+        4 => {
+            let config = LightConfig::new(number_lights, io_pin);
+            let strip = strip_builder::ws281x(config);
+            let arrangement = to_pyresult(ArrangementConfig::<4>::from_csv(&input_file))?;
+            return Ok(PyLightArrangement {
+                light_arr_enum: LightArrangementTypes::Ws2814Dx(strip),
+            });
+        }
+        _ => Err(PyValueError::new_err(
+            "Dimension number must be 1, 2, 3, or 4",
+        )),
+    }
+}
+
+#[pymethods]
+impl PyLightArrangement {
+    fn get_closest_polar(
+        &self,
+        rho: f64,
+        angular_coords: Vec<f64>,
+        center: Vec<f64>,
+        max_search_distance: f64,
+    ) -> Option<(u8, u8, u8)> {
+        match &self.light_arr_enum {
+            LightArrangementTypes::Test1d(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<1>(center));
+                let opt_color = arr.get_closest(&loc, max_search_distance);
+                return color_to_tuple(opt_color);
+            }
+            LightArrangementTypes::Test2D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<2>(center));
+                let opt_color = arr.get_closest(&loc, max_search_distance);
+                return color_to_tuple(opt_color);
+            }
+            LightArrangementTypes::Test3D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<3>(center));
+                let opt_color = arr.get_closest(&loc, max_search_distance);
+                return color_to_tuple(opt_color);
+            }
+            LightArrangementTypes::Test4D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<4>(center));
+                let opt_color = arr.get_closest(&loc, max_search_distance);
+                return color_to_tuple(opt_color);
+            }
+        }
     }
 }
 
