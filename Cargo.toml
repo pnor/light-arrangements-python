@@ -10,4 +10,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = { version = "0.18.0", features = ["extension-module"] }
-light-arrangements = { git = "https://github.com/pnor/light-arrangements" }
+light-arrangements = { git = "https://github.com/pnor/light-arrangements", features =["visualizer"]}

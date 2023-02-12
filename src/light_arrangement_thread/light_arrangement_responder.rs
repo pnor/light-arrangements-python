@@ -1,3 +1,6 @@
+/// Handles the work done by the thread that holds the LightArrangement Object.
+/// Waits for requests from the main python thread, and sends back responses after doing the
+/// computation work on this thread
 use std::sync::mpsc::{Receiver, Sender};
 
 use light_arrangements::{LightArrangement, LightStrip, RealStrip};
@@ -7,7 +10,7 @@ use crate::util::vec_to_color;
 use super::{requests::Requests, responses::Responses, LightArrangementThread};
 
 impl<const N: usize> LightArrangementThread<N> {
-    pub fn light_arrangement_thread<T: LightStrip + RealStrip>(
+    pub fn light_arrangement_thread<T: LightStrip>(
         mut light_arrangement: LightArrangement<T, N>,
         request_receiver: Receiver<Requests<N>>,
         response_sender: Sender<Responses>,
