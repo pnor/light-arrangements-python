@@ -1,4 +1,4 @@
-use led_arrangements::Color;
+use light_arrangements::Color;
 
 /// Converts a vector to an array
 pub fn vec_to_array<const N: usize>(vec: Vec<f64>) -> [f64; N] {

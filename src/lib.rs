@@ -1,12 +1,15 @@
+mod errors;
 mod light_arrangement_thread;
+mod types;
 mod util;
 
-use led_arrangements::{
-    self, strip_builder, ArrangementConfig, ArrangementConfigError, Color, LightConfig, LightStrip,
-    Loc, TestStripDisplayConfig, Ws281xStrip,
-};
-use led_arrangements::{LightArrangement, TestStrip};
+use errors::to_pyresult;
 use light_arrangement_thread::LightArrangementThread;
+use light_arrangements::{
+    self, ArrangementConfig, Color, LightArrangementError, LightStrip, LightStripConfig, Loc,
+    TestStripDisplayConfig, Ws281xStrip,
+};
+use light_arrangements::{LightArrangement, TestStrip};
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use util::{color_to_tuple, vec_to_array};
@@ -36,6 +39,11 @@ use util::{color_to_tuple, vec_to_array};
 // - show()
 // - fill
 
+#[pyclass]
+struct PyLightArrangement {
+    light_arr_enum: LightArrangementTypes,
+}
+
 enum LightArrangementTypes {
     Test1D(LightArrangement<TestStrip, 1>),
     Test2D(LightArrangement<TestStrip, 2>),
@@ -45,18 +53,6 @@ enum LightArrangementTypes {
     Ws281x2D(LightArrangementThread<2>),
     Ws281x3D(LightArrangementThread<3>),
     Ws281x4D(LightArrangementThread<4>),
-}
-
-#[pyclass]
-struct PyLightArrangement {
-    light_arr_enum: LightArrangementTypes,
-}
-
-fn to_pyresult<T>(result: Result<T, ArrangementConfigError>) -> Result<T, PyErr> {
-    match result {
-        Ok(t) => Ok(t),
-        Err(e) => Err(PyValueError::new_err(e.reason())),
-    }
 }
 
 fn create_test_arrangement<const N: usize>(
@@ -70,7 +66,6 @@ fn create_test_arrangement<const N: usize>(
 }
 
 // ===== Exported Functions to python module
-
 #[pyfunction]
 fn init_test(
     number_dimensions: usize,
@@ -86,7 +81,7 @@ fn init_test(
                 input_file,
             )?;
             return Ok(PyLightArrangement {
-                light_arr_enum: LightArrangementTypes::Test1d(test_arrangement),
+                light_arr_enum: LightArrangementTypes::Test1D(test_arrangement),
             });
         }
         2 => {
@@ -104,7 +99,7 @@ fn init_test(
                 input_file,
             )?;
             return Ok(PyLightArrangement {
-                light_arr_enum: LightArrangementTypes::Test2D(test_arrangement),
+                light_arr_enum: LightArrangementTypes::Test3D(test_arrangement),
             });
         }
         4 => {
@@ -113,7 +108,7 @@ fn init_test(
                 input_file,
             )?;
             return Ok(PyLightArrangement {
-                light_arr_enum: LightArrangementTypes::Test2D(test_arrangement),
+                light_arr_enum: LightArrangementTypes::Test4D(test_arrangement),
             });
         }
         _ => Err(PyValueError::new_err(
@@ -122,43 +117,45 @@ fn init_test(
     }
 }
 
+#[pyfunction]
 fn init_ws281x(
     number_dimensions: usize,
     input_file: String,
     number_lights: i32,
     io_pin: i32,
 ) -> PyResult<PyLightArrangement> {
+    let strip_config = LightStripConfig::new(number_lights, io_pin);
     match number_dimensions {
         1 => {
-            let strip = strip_builder::ws281x(config);
-            let light_arr_threading =
-                LightArrangementThread::new(strip, input_file, number_lights, io_pin);
+            let light_arr_threading = to_pyresult(
+                LightArrangementThread::<1>::new::<Ws281xStrip>(strip_config, input_file),
+            )?;
             return Ok(PyLightArrangement {
                 light_arr_enum: LightArrangementTypes::Ws281x1D(light_arr_threading),
             });
         }
         2 => {
-            let config = LightConfig::new(number_lights, io_pin);
-            let strip = strip_builder::ws281x(config);
-            let arrangement = to_pyresult(ArrangementConfig::<2>::from_csv(&input_file))?;
+            let light_arr_threading = to_pyresult(
+                LightArrangementThread::<2>::new::<Ws281xStrip>(strip_config, input_file),
+            )?;
             return Ok(PyLightArrangement {
-                light_arr_enum: LightArrangementTypes::Ws281x2D(strip),
+                light_arr_enum: LightArrangementTypes::Ws281x2D(light_arr_threading),
             });
         }
         3 => {
-            let config = LightConfig::new(number_lights, io_pin);
-            let strip = strip_builder::ws281x(config);
-            let arrangement = to_pyresult(ArrangementConfig::<3>::from_csv(&input_file))?;
+            let light_arr_threading = to_pyresult(
+                LightArrangementThread::<3>::new::<Ws281xStrip>(strip_config, input_file),
+            )?;
             return Ok(PyLightArrangement {
-                light_arr_enum: LightArrangementTypes::Ws281x3D(strip),
+                light_arr_enum: LightArrangementTypes::Ws281x3D(light_arr_threading),
             });
         }
         4 => {
-            let config = LightConfig::new(number_lights, io_pin);
-            let strip = strip_builder::ws281x(config);
-            let arrangement = to_pyresult(ArrangementConfig::<4>::from_csv(&input_file))?;
+            let light_arr_threading = to_pyresult(
+                LightArrangementThread::<4>::new::<Ws281xStrip>(strip_config, input_file),
+            )?;
             return Ok(PyLightArrangement {
-                light_arr_enum: LightArrangementTypes::Ws2814Dx(strip),
+                light_arr_enum: LightArrangementTypes::Ws281x4D(light_arr_threading),
             });
         }
         _ => Err(PyValueError::new_err(
@@ -175,27 +172,47 @@ impl PyLightArrangement {
         angular_coords: Vec<f64>,
         center: Vec<f64>,
         max_search_distance: f64,
-    ) -> Option<(u8, u8, u8)> {
+    ) -> PyResult<Option<(u8, u8, u8)>> {
         match &self.light_arr_enum {
-            LightArrangementTypes::Test1d(arr) => {
+            LightArrangementTypes::Test1D(test_arrangement) => {
                 let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<1>(center));
-                let opt_color = arr.get_closest(&loc, max_search_distance);
-                return color_to_tuple(opt_color);
+                let opt_color = test_arrangement.get_closest(&loc, max_search_distance);
+                return Ok(color_to_tuple(opt_color));
             }
-            LightArrangementTypes::Test2D(arr) => {
+            LightArrangementTypes::Test2D(test_arrangement) => {
                 let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<2>(center));
-                let opt_color = arr.get_closest(&loc, max_search_distance);
-                return color_to_tuple(opt_color);
+                let opt_color = test_arrangement.get_closest(&loc, max_search_distance);
+                return Ok(color_to_tuple(opt_color));
             }
-            LightArrangementTypes::Test3D(arr) => {
+            LightArrangementTypes::Test3D(test_arrangement) => {
                 let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<3>(center));
-                let opt_color = arr.get_closest(&loc, max_search_distance);
-                return color_to_tuple(opt_color);
+                let opt_color = test_arrangement.get_closest(&loc, max_search_distance);
+                return Ok(color_to_tuple(opt_color));
             }
-            LightArrangementTypes::Test4D(arr) => {
+            LightArrangementTypes::Test4D(test_arrangement) => {
                 let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<4>(center));
-                let opt_color = arr.get_closest(&loc, max_search_distance);
-                return color_to_tuple(opt_color);
+                let opt_color = test_arrangement.get_closest(&loc, max_search_distance);
+                return Ok(color_to_tuple(opt_color));
+            }
+            LightArrangementTypes::Ws281x1D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<1>(center));
+                let opt_color = arr.get_closest_polar(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Ws281x2D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<2>(center));
+                let opt_color = arr.get_closest_polar(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Ws281x3D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<3>(center));
+                let opt_color = arr.get_closest_polar(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Ws281x4D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<4>(center));
+                let opt_color = arr.get_closest_polar(&loc, max_search_distance)?;
+                return Ok(opt_color);
             }
         }
     }
@@ -204,6 +221,6 @@ impl PyLightArrangement {
 /// A Python module implemented in Rust.
 #[pymodule]
 fn led_arrangements_python(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(init_test, m)?)?;
+    m.add_class::<PyLightArrangement>()?;
     Ok(())
 }

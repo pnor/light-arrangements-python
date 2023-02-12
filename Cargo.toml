@@ -1,13 +1,13 @@
 [package]
-name = "led-arrangements-python"
+name = "light-arrangements-python"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
-name = "led_arrangements_python"
+name = "light_arrangements_python"
 crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = { version = "0.18.0", features = ["extension-module"] }
-led-arrangements = { git = "https://github.com/pnor/led-arrangements" }
+light-arrangements = { git = "https://github.com/pnor/light-arrangements" }
