@@ -18,9 +18,10 @@ impl<const N: usize> LightArrangementThread<N> {
         let mut listening = true;
 
         while listening {
+            println!("listening...");
             let request = request_receiver.recv();
             match request {
-                Err(RecvError) => {
+                Err(_) => {
                     eprintln!(
                         "Got recv error when trying to read request response in other thread"
                     );
@@ -30,7 +31,7 @@ impl<const N: usize> LightArrangementThread<N> {
                     Requests::Quit => {
                         listening = false;
                     }
-                    Requests::GetClosestPolar(loc, max_search_distance) => {
+                    Requests::GetClosest(loc, max_search_distance) => {
                         let result = match light_arrangement.get_closest(&loc, max_search_distance)
                         {
                             None => Responses::None,
@@ -43,13 +44,13 @@ impl<const N: usize> LightArrangementThread<N> {
                             listening = false;
                         }
                     }
-                    Requests::SetClosestPolar(loc, max_search_distance, color) => {
+                    Requests::SetClosest(loc, max_search_distance, color) => {
                         light_arrangement.set_closest(
                             &loc,
                             max_search_distance,
                             &vec_to_color(color),
                         );
-                        if let Err(err) = response_sender.send(Responses::None) {
+                        if let Err(_) = response_sender.send(Responses::None) {
                             eprintln!("Error sending result!");
                             listening = false;
                         }

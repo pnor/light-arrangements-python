@@ -17,6 +17,10 @@ pub struct LightArrangementThread<const N: usize> {
 
 impl<const N: usize> Drop for LightArrangementThread<N> {
     fn drop(&mut self) {
-        self.request_sender.send(Requests::Quit);
+        let response = self.request_sender.send(Requests::Quit);
+        match response {
+            Ok(_) => println!("Succesfully dropped the light arrangement thread"),
+            Err(_) => println!("Failed to send the quit message to the light arrangement thread"),
+        };
     }
 }

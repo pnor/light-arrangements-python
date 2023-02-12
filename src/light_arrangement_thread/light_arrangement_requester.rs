@@ -7,7 +7,7 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::PyResult;
 
-use crate::types::PythonReturnColor;
+use crate::types::{PythonColor, PythonReturnColor};
 
 use super::responses::Responses;
 use super::{requests::Requests, LightArrangementThread};
@@ -62,6 +62,9 @@ impl<const N: usize> LightArrangementThread<N> {
         let (response_sender, response_receiver) = channel();
 
         thread::spawn(move || {
+            // TODO if this thread fails to start, should somehow signal back the error (avoid hard
+            // to catch errors like this thread never responding on bad init args)
+            //
             let arrangement_config_result = ArrangementConfig::from_csv(&input_file);
             if let Err(error) = arrangement_config_result {
                 eprintln!("Failed to create arrangement: {}", error.reason());
@@ -91,20 +94,65 @@ impl<const N: usize> LightArrangementThread<N> {
         });
     }
 
-    pub fn get_closest_polar(
+    pub fn get_closest(
         &self,
         loc: &Loc<N>,
         max_search_distance: f64,
     ) -> PyResult<Option<PythonReturnColor>> {
         let send_result = self
             .request_sender
-            .send(Requests::GetClosestPolar(loc.clone(), max_search_distance));
+            .send(Requests::GetClosest(loc.clone(), max_search_distance));
         if let Err(err) = send_result {
             return Err(PyValueError::new_err("Unable to send request"));
         }
 
         match self.response_receiver.recv() {
             Ok(Responses::ColorResponse(c)) => Ok(c),
+            _ => Err(PyValueError::new_err(
+                "Got wrong response internally from Light Arrangement thread",
+            )),
+        }
+    }
+
+    pub fn set_closest(
+        &self,
+        loc: &Loc<N>,
+        max_search_distance: f64,
+        color: PythonColor,
+    ) -> PyResult<()> {
+        let send_result = self.request_sender.send(Requests::SetClosest(
+            loc.clone(),
+            max_search_distance,
+            color,
+        ));
+        if let Err(err) = send_result {
+            return Err(PyValueError::new_err("Unable to send request"));
+        }
+
+        match self.response_receiver.recv() {
+            Ok(Responses::None) => Ok(()),
+            Ok(_) => Err(PyValueError::new_err(
+                "Expected None response internally but got value",
+            )),
+            Err(err) => {
+                return Err(PyValueError::new_err(
+                    "Failed to receive response from Light Arrangement thread",
+                ));
+            }
+        }
+    }
+
+    pub fn show(&self) -> PyResult<()> {
+        let send_result = self.request_sender.send(Requests::Show);
+        if let Err(err) = send_result {
+            return Err(PyValueError::new_err("Unable to send request"));
+        }
+
+        match self.response_receiver.recv() {
+            Ok(Responses::None) => Ok(()),
+            Ok(_) => Err(PyValueError::new_err(
+                "Expected None response internally but got value",
+            )),
             _ => Err(PyValueError::new_err(
                 "Got wrong response internally from Light Arrangement thread",
             )),
