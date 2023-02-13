@@ -274,6 +274,102 @@ impl PyLightArrangement {
         }
     }
 
+    pub fn set_all_in_radius_polar(
+        &self,
+        rho: f64,
+        angular_coords: Vec<f64>,
+        center: Vec<f64>,
+        radius: f64,
+        color: PythonColor,
+    ) -> PyResult<()> {
+        match &self.light_arr_enum {
+            LightArrangementTypes::Test1D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<1>(center));
+                let radius = radius;
+                let result = arr.set_all_in_radius(loc, radius, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Test2D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<2>(center));
+                let radius = radius;
+                let result = arr.set_all_in_radius(loc, radius, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Test3D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<3>(center));
+                let radius = radius;
+                let result = arr.set_all_in_radius(loc, radius, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Test4D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<4>(center));
+                let radius = radius;
+                let result = arr.set_all_in_radius(loc, radius, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x1D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<1>(center));
+                let radius = radius;
+                let result = arr.set_all_in_radius(loc, radius, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x2D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<2>(center));
+                let radius = radius;
+                let result = arr.set_all_in_radius(loc, radius, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x3D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<3>(center));
+                let radius = radius;
+                let result = arr.set_all_in_radius(loc, radius, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x4D(arr) => {
+                let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<4>(center));
+                let radius = radius;
+                let result = arr.set_all_in_radius(loc, radius, color)?;
+                return Ok(result);
+            }
+        }
+    }
+
+    pub fn set_by_index(&self, index: usize, color: PythonColor) -> PyResult<()> {
+        match &self.light_arr_enum {
+            LightArrangementTypes::Test1D(arr) => {
+                let result = arr.set_by_index(index, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Test2D(arr) => {
+                let result = arr.set_by_index(index, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Test3D(arr) => {
+                let result = arr.set_by_index(index, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Test4D(arr) => {
+                let result = arr.set_by_index(index, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x1D(arr) => {
+                let result = arr.set_by_index(index, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x2D(arr) => {
+                let result = arr.set_by_index(index, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x3D(arr) => {
+                let result = arr.set_by_index(index, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x4D(arr) => {
+                let result = arr.set_by_index(index, color)?;
+                return Ok(result);
+            }
+        }
+    }
     pub fn show(&self) -> PyResult<()> {
         match &self.light_arr_enum {
             LightArrangementTypes::Test1D(arr) => {

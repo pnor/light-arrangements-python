@@ -27,8 +27,8 @@ use light_arrangement_python_obj::init_ws281x;
 // - [.] set closest(loc, dist)
 // - [.] set dec intensity(loc, dist, color)
 // - [.] set dec intensity merge(loc, dist, color)
-// - set all in box(lower, upper, color)
-// - set all in radius(center, radius color)
+// - [.] set all in box(lower, upper, color)
+// - [.] set all in radius(center, radius color)
 // raw strip
 // - get(index) -> Color
 // - set(index, color)

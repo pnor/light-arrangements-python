@@ -75,6 +75,21 @@ impl<const N: usize> LightArrangementThread<N> {
                         &color,
                         &mut listening,
                     ),
+                    Requests::SetRadius(loc, radius, color) => Self::thread_set_all_in_radius(
+                        &mut light_arrangement,
+                        &response_sender,
+                        &loc,
+                        radius,
+                        &color,
+                        &mut listening,
+                    ),
+                    Requests::SetByIndex(index, color) => Self::thread_set_by_index(
+                        &mut light_arrangement,
+                        &response_sender,
+                        index,
+                        &color,
+                        &mut listening,
+                    ),
                     Requests::Fill(color) => Self::thread_fill(
                         &mut light_arrangement,
                         &response_sender,
@@ -166,6 +181,35 @@ impl<const N: usize> LightArrangementThread<N> {
         listening: &mut bool,
     ) {
         light_arrangement.set_all_in_box(loc1, loc2, &vec_to_color(color));
+        if let Err(_) = response_sender.send(Responses::None) {
+            eprintln!("Error sending result!");
+            *listening = false;
+        }
+    }
+
+    fn thread_set_all_in_radius<T: LightStrip>(
+        light_arrangement: &mut LightArrangement<T, N>,
+        response_sender: &Sender<Responses>,
+        loc: &Loc<N>,
+        radius: f64,
+        color: &PythonColor,
+        listening: &mut bool,
+    ) {
+        light_arrangement.set_all_in_radius(loc, radius, &vec_to_color(color));
+        if let Err(_) = response_sender.send(Responses::None) {
+            eprintln!("Error sending result!");
+            *listening = false;
+        }
+    }
+
+    fn thread_set_by_index<T: LightStrip>(
+        light_arrangement: &mut LightArrangement<T, N>,
+        response_sender: &Sender<Responses>,
+        index: usize,
+        color: &PythonColor,
+        listening: &mut bool,
+    ) {
+        light_arrangement.set_by_index(index, &vec_to_color(color));
         if let Err(_) = response_sender.send(Responses::None) {
             eprintln!("Error sending result!");
             *listening = false;

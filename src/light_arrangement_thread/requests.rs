@@ -11,7 +11,7 @@ pub enum Requests<const N: usize> {
     SetBox(Loc<N>, Loc<N>, PythonColor),
     SetRadius(Loc<N>, f64, PythonColor),
     GetByIndex(usize),
-    SetByIndex(usize),
+    SetByIndex(usize, PythonColor),
     Fill(Vec<u8>),
     Show,
     Quit,
