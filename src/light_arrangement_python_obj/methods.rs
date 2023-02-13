@@ -60,6 +60,107 @@ impl PyLightArrangement {
         }
     }
 
+    pub fn get_closest_cartesian(
+        &self,
+        coordinate: Vec<f64>,
+        max_search_distance: f64,
+    ) -> PyResult<Option<PythonReturnColor>> {
+        match &self.light_arr_enum {
+            LightArrangementTypes::Test1D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<1>(coordinate));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Test2D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<2>(coordinate));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Test3D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<3>(coordinate));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Test4D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<4>(coordinate));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Ws281x1D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<1>(coordinate));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Ws281x2D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<2>(coordinate));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Ws281x3D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<3>(coordinate));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Ws281x4D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<4>(coordinate));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+        }
+    }
+
+    pub fn get_closest_cylindrical(
+        &self,
+        radius: f64,
+        theta: f64,
+        coords: Vec<f64>,
+        origin: Vec<f64>,
+        max_search_distance: f64,
+    ) -> PyResult<Option<PythonReturnColor>> {
+        match &self.light_arr_enum {
+            LightArrangementTypes::Test1D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<1>(origin));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Test2D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<2>(origin));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Test3D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<3>(origin));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Test4D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<4>(origin));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Ws281x1D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<1>(origin));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Ws281x2D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<2>(origin));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Ws281x3D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<3>(origin));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+            LightArrangementTypes::Ws281x4D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<4>(origin));
+                let opt_color = arr.get_closest(&loc, max_search_distance)?;
+                return Ok(opt_color);
+            }
+        }
+    }
+
     pub fn get_by_index(&self, index: usize) -> PyResult<PythonReturnColor> {
         match &self.light_arr_enum {
             LightArrangementTypes::Test1D(arr) => {
@@ -143,6 +244,109 @@ impl PyLightArrangement {
             }
             LightArrangementTypes::Ws281x4D(arr) => {
                 let loc = Loc::polar(rho, &angular_coords, &vec_to_array::<4>(center));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+        }
+    }
+
+    pub fn set_closest_cartesian(
+        &self,
+        coordinate: Vec<f64>,
+        max_search_distance: f64,
+        color: PythonColor,
+    ) -> PyResult<()> {
+        match &self.light_arr_enum {
+            LightArrangementTypes::Test1D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<1>(coordinate));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Test2D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<2>(coordinate));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Test3D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<3>(coordinate));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Test4D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<4>(coordinate));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x1D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<1>(coordinate));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x2D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<2>(coordinate));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x3D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<3>(coordinate));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x4D(arr) => {
+                let loc = Loc::cartesian(vec_to_array::<4>(coordinate));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+        }
+    }
+
+    pub fn set_closest_cylindrical(
+        &self,
+        radius: f64,
+        theta: f64,
+        coords: Vec<f64>,
+        origin: Vec<f64>,
+        max_search_distance: f64,
+        color: PythonColor,
+    ) -> PyResult<()> {
+        match &self.light_arr_enum {
+            LightArrangementTypes::Test1D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<1>(origin));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Test2D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<2>(origin));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Test3D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<3>(origin));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Test4D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<4>(origin));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x1D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<1>(origin));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x2D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<2>(origin));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x3D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<3>(origin));
+                let result = arr.set_closest(&loc, max_search_distance, color)?;
+                return Ok(result);
+            }
+            LightArrangementTypes::Ws281x4D(arr) => {
+                let loc = Loc::cylindrical(radius, theta, coords, &vec_to_array::<4>(origin));
                 let result = arr.set_closest(&loc, max_search_distance, color)?;
                 return Ok(result);
             }

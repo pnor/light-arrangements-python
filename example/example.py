@@ -18,7 +18,16 @@ obj.set_closest_polar(0.4, [np.pi * 1.5], (0.5, 0.5), 0.2, (0, 0, 255))
 obj.set_decreasing_intensity_polar(0.4, [np.pi * 1.8], (0.5, 0.5), 0.3, (100, 255, 200))
 
 
-obj.get_closest_polar(0.2, [40], (0.5, 0.5), 0.2)
+print("=-=-=")
+obj.set_closest_polar(0.2, [40], (0.5, 0.5), 0.2, (123, 0, 0))
+print(obj.get_closest_polar(0.2, [40], (0.5, 0.5), 0.2))
+
+obj.set_closest_cartesian([0, 0], 0.2, (0, 123, 0))
+print(obj.get_closest_cartesian([0, 0], 0.2))
+
+obj.set_closest_cylindrical(0, 0, [], (0.5, 0.5), 0.2, (0, 0, 123))
+print(obj.get_closest_cylindrical(0, 0, [], (0.5, 0.5), 0.2))
+print("=-=-=")
 
 obj.set_all_in_box([0, 0], [0.4, 0.4], (150, 150, 0))
 obj.set_all_in_radius_polar(0.0, [0], (1, 1), 0.3, (0, 150, 150))
