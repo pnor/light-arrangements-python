@@ -15,7 +15,3 @@ pub fn vec_to_color(vec: &Vec<u8>) -> Color {
         blue: vec[2],
     }
 }
-
-// pub fn color_to_tuple(color_opt: Option<Color>) -> Option<(u8, u8, u8)> {
-//     color_opt.map_or(None, |c| Some((c.red, c.green, c.blue)))
-// }

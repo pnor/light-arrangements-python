@@ -25,6 +25,8 @@ obj.set_all_in_radius_polar(0.0, [0], (1, 1), 0.3, (0, 150, 150))
 obj.set_by_index(0, (255, 255, 255))
 obj.set_by_index(1, (255, 255, 255))
 obj.set_by_index(2, (255, 255, 255))
+print(obj.get_by_index(2))
+print("-------")
 obj.show()
 
 # for i in range(200):

@@ -134,6 +134,20 @@ impl<const N: usize> LightArrangementThread<N> {
         }
 
         match self.response_receiver.recv() {
+            Ok(Responses::OptionColorResponse(c)) => Ok(c),
+            _ => Err(PyValueError::new_err(
+                "Got wrong response internally from Light Arrangement thread",
+            )),
+        }
+    }
+
+    pub fn get_by_index(&self, index: usize) -> PyResult<PythonReturnColor> {
+        let send_result = self.request_sender.send(Requests::GetByIndex(index));
+        if let Err(_) = send_result {
+            return Err(PyValueError::new_err("Unable to send request"));
+        }
+
+        match self.response_receiver.recv() {
             Ok(Responses::ColorResponse(c)) => Ok(c),
             _ => Err(PyValueError::new_err(
                 "Got wrong response internally from Light Arrangement thread",

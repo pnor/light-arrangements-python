@@ -37,6 +37,12 @@ impl<const N: usize> LightArrangementThread<N> {
                         max_search_distance,
                         &mut listening,
                     ),
+                    Requests::GetByIndex(index) => Self::thread_get_by_index(
+                        &mut light_arrangement,
+                        &response_sender,
+                        index,
+                        &mut listening,
+                    ),
                     Requests::SetClosest(loc, max_search_distance, color) => {
                         Self::thread_set_closest(
                             &mut light_arrangement,
@@ -118,10 +124,32 @@ impl<const N: usize> LightArrangementThread<N> {
         listening: &mut bool,
     ) {
         let result = match light_arrangement.get_closest(&loc, max_search_distance) {
-            None => Responses::ColorResponse(None),
-            Some(color) => Responses::ColorResponse(Some((color.red, color.green, color.blue))),
+            None => Responses::OptionColorResponse(None),
+            Some(color) => {
+                Responses::OptionColorResponse(Some((color.red, color.green, color.blue)))
+            }
         };
         if response_sender.send(result).is_err() {
+            eprintln!("Error sending result!");
+            *listening = false;
+        }
+    }
+
+    fn thread_get_by_index<T: LightStrip>(
+        light_arrangement: &mut LightArrangement<T, N>,
+        response_sender: &Sender<Responses>,
+        index: usize,
+        listening: &mut bool,
+    ) {
+        let color = light_arrangement.get_by_index(index);
+        if response_sender
+            .send(Responses::ColorResponse((
+                color.red,
+                color.green,
+                color.blue,
+            )))
+            .is_err()
+        {
             eprintln!("Error sending result!");
             *listening = false;
         }

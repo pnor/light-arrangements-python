@@ -5,5 +5,6 @@ pub enum Responses {
     InitOk,
     InitFailed,
     None,
-    ColorResponse(Option<PythonReturnColor>),
+    OptionColorResponse(Option<PythonReturnColor>),
+    ColorResponse(PythonReturnColor),
 }

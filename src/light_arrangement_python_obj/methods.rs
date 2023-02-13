@@ -60,6 +60,43 @@ impl PyLightArrangement {
         }
     }
 
+    pub fn get_by_index(&self, index: usize) -> PyResult<PythonReturnColor> {
+        match &self.light_arr_enum {
+            LightArrangementTypes::Test1D(arr) => {
+                let color = arr.get_by_index(index)?;
+                return Ok(color);
+            }
+            LightArrangementTypes::Test2D(arr) => {
+                let color = arr.get_by_index(index)?;
+                return Ok(color);
+            }
+            LightArrangementTypes::Test3D(arr) => {
+                let color = arr.get_by_index(index)?;
+                return Ok(color);
+            }
+            LightArrangementTypes::Test4D(arr) => {
+                let color = arr.get_by_index(index)?;
+                return Ok(color);
+            }
+            LightArrangementTypes::Ws281x1D(arr) => {
+                let color = arr.get_by_index(index)?;
+                return Ok(color);
+            }
+            LightArrangementTypes::Ws281x2D(arr) => {
+                let color = arr.get_by_index(index)?;
+                return Ok(color);
+            }
+            LightArrangementTypes::Ws281x3D(arr) => {
+                let color = arr.get_by_index(index)?;
+                return Ok(color);
+            }
+            LightArrangementTypes::Ws281x4D(arr) => {
+                let color = arr.get_by_index(index)?;
+                return Ok(color);
+            }
+        }
+    }
+
     pub fn set_closest_polar(
         &self,
         rho: f64,
@@ -370,6 +407,7 @@ impl PyLightArrangement {
             }
         }
     }
+
     pub fn show(&self) -> PyResult<()> {
         match &self.light_arr_enum {
             LightArrangementTypes::Test1D(arr) => {
