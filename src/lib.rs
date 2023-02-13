@@ -23,10 +23,10 @@ use light_arrangement_python_obj::init_ws281x;
 // - init arrangement for test (arrangement, strip config, display config)
 //
 // spacial strip
-// - [X] get closest(loc, dist) -> opt[color]
-// - [X] set closest(loc, dist)
-// - set dec intensity(loc, dist, color)
-// - set dec intensity merge(loc, dist, color)
+// - [.] get closest(loc, dist) -> opt[color]
+// - [.] set closest(loc, dist)
+// - [.] set dec intensity(loc, dist, color)
+// - [.] set dec intensity merge(loc, dist, color)
 // - set all in box(lower, upper, color)
 // - set all in radius(center, radius color)
 // raw strip

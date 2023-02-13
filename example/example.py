@@ -20,6 +20,9 @@ obj.set_decreasing_intensity_polar(0.4, [np.pi * 1.8], (0.5, 0.5), 0.3, (100, 25
 
 obj.get_closest_polar(0.2, [40], (0.5, 0.5), 0.2)
 
+obj.set_all_in_box([0, 0], [0.4, 0.4], (150, 150, 0))
+obj.show()
+
 # for i in range(200):
 #     obj.show()
 #     time.sleep(0.05)

@@ -67,6 +67,14 @@ impl<const N: usize> LightArrangementThread<N> {
                             &mut listening,
                         )
                     }
+                    Requests::SetBox(loc1, loc2, color) => Self::thread_set_all_in_box(
+                        &mut light_arrangement,
+                        &response_sender,
+                        &loc1,
+                        &loc2,
+                        &color,
+                        &mut listening,
+                    ),
                     Requests::Fill(color) => Self::thread_fill(
                         &mut light_arrangement,
                         &response_sender,
@@ -143,6 +151,21 @@ impl<const N: usize> LightArrangementThread<N> {
         listening: &mut bool,
     ) {
         light_arrangement.set_decreasing_intensity_merge(&loc, set_distance, &vec_to_color(color));
+        if let Err(_) = response_sender.send(Responses::None) {
+            eprintln!("Error sending result!");
+            *listening = false;
+        }
+    }
+
+    fn thread_set_all_in_box<T: LightStrip>(
+        light_arrangement: &mut LightArrangement<T, N>,
+        response_sender: &Sender<Responses>,
+        loc1: &Loc<N>,
+        loc2: &Loc<N>,
+        color: &PythonColor,
+        listening: &mut bool,
+    ) {
+        light_arrangement.set_all_in_box(loc1, loc2, &vec_to_color(color));
         if let Err(_) = response_sender.send(Responses::None) {
             eprintln!("Error sending result!");
             *listening = false;
