@@ -8,7 +8,7 @@ pub fn vec_to_array<const N: usize>(vec: Vec<f64>) -> [f64; N] {
 }
 
 /// Converts the first 3 elements of a vector to a Color
-pub fn vec_to_color(vec: Vec<u8>) -> Color {
+pub fn vec_to_color(vec: &Vec<u8>) -> Color {
     Color {
         red: vec[0],
         green: vec[1],
@@ -16,6 +16,6 @@ pub fn vec_to_color(vec: Vec<u8>) -> Color {
     }
 }
 
-pub fn color_to_tuple(color_opt: Option<Color>) -> Option<(u8, u8, u8)> {
-    color_opt.map_or(None, |c| Some((c.red, c.green, c.blue)))
-}
+// pub fn color_to_tuple(color_opt: Option<Color>) -> Option<(u8, u8, u8)> {
+//     color_opt.map_or(None, |c| Some((c.red, c.green, c.blue)))
+// }

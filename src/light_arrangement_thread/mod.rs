@@ -3,7 +3,7 @@ mod light_arrangement_responder;
 mod requests;
 mod responses;
 
-use std::sync::mpsc::{channel, Receiver, RecvError, SendError, Sender};
+use std::sync::mpsc::{Receiver, Sender};
 
 use self::{requests::Requests, responses::Responses};
 

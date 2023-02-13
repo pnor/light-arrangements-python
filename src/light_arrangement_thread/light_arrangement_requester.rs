@@ -54,20 +54,20 @@ impl<const N: usize> LightArrangementThread<N> {
     }
 
     /// Spawns a new thread with a Test Strip, returning the object to control it
-    pub fn test(
-        test_strip_config: TestStripDisplayConfig,
-        input_file: String,
-    ) -> Result<Self, LightArrangementError> {
+    pub fn test(test_strip_config: TestStripDisplayConfig, input_file: String) -> PyResult<Self> {
         let (request_sender, request_receiver) = channel();
         let (response_sender, response_receiver) = channel();
 
         thread::spawn(move || {
-            // TODO if this thread fails to start, should somehow signal back the error (avoid hard
-            // to catch errors like this thread never responding on bad init args)
-            //
             let arrangement_config_result = ArrangementConfig::from_csv(&input_file);
             if let Err(error) = arrangement_config_result {
                 eprintln!("Failed to create arrangement: {}", error.reason());
+                if response_sender.send(Responses::InitFailed).is_err() {
+                    eprintln!(
+                        "Failed to send back to main thread that light arrangement thread
+                failed to start"
+                    );
+                }
                 return;
             }
 
@@ -78,20 +78,47 @@ impl<const N: usize> LightArrangementThread<N> {
 
             let light_arrangement_res =
                 LightArrangement::new(test_strip, arrangement_config_result.unwrap());
+
             if let Ok(light_arrangement) = light_arrangement_res {
+                if response_sender.send(Responses::InitOk).is_err() {
+                    eprintln!(
+                        "Failed to send back to main thread that light arrangmeent succesfully
+                started"
+                    );
+                }
                 Self::light_arrangement_thread(light_arrangement, request_receiver, response_sender)
             } else {
                 eprintln!(
                     "Failed to create light arrangment: {}",
                     light_arrangement_res.err().unwrap().reason()
                 );
+                if response_sender.send(Responses::InitFailed).is_err() {
+                    eprintln!(
+                        "Failed to send back to main thread that light arrangement thread
+                failed to start"
+                    );
+                }
+                return;
             }
         });
 
-        return Ok(Self {
-            request_sender,
-            response_receiver,
-        });
+        let init_response = response_receiver.recv();
+        return match init_response {
+            Ok(Responses::InitOk) => Ok(Self {
+                request_sender,
+                response_receiver,
+            }),
+            Ok(Responses::InitFailed) => Err(PyValueError::new_err(
+                "Failed to start light
+        arrangement thread!",
+            )),
+            Ok(_) => Err(PyValueError::new_err(
+                "Failed to start light arrangement thread; Internally returned wrong response",
+            )),
+            _ => Err(PyValueError::new_err(
+                "Failed to start light thread due to receive error",
+            )),
+        };
     }
 
     pub fn get_closest(
@@ -102,7 +129,7 @@ impl<const N: usize> LightArrangementThread<N> {
         let send_result = self
             .request_sender
             .send(Requests::GetClosest(loc.clone(), max_search_distance));
-        if let Err(err) = send_result {
+        if let Err(_) = send_result {
             return Err(PyValueError::new_err("Unable to send request"));
         }
 
@@ -125,7 +152,7 @@ impl<const N: usize> LightArrangementThread<N> {
             max_search_distance,
             color,
         ));
-        if let Err(err) = send_result {
+        if let Err(_) = send_result {
             return Err(PyValueError::new_err("Unable to send request"));
         }
 
@@ -134,7 +161,7 @@ impl<const N: usize> LightArrangementThread<N> {
             Ok(_) => Err(PyValueError::new_err(
                 "Expected None response internally but got value",
             )),
-            Err(err) => {
+            Err(_) => {
                 return Err(PyValueError::new_err(
                     "Failed to receive response from Light Arrangement thread",
                 ));
@@ -142,9 +169,37 @@ impl<const N: usize> LightArrangementThread<N> {
         }
     }
 
-    pub fn show(&self) -> PyResult<()> {
-        let send_result = self.request_sender.send(Requests::Show);
-        if let Err(err) = send_result {
+    pub fn set_decreasing_intensity(
+        &self,
+        loc: &Loc<N>,
+        set_distance: f64,
+        color: PythonColor,
+    ) -> PyResult<()> {
+        let send_result = self.request_sender.send(Requests::SetDecreasingIntensity(
+            loc.clone(),
+            set_distance,
+            color,
+        ));
+        if let Err(_) = send_result {
+            return Err(PyValueError::new_err("Unable to send request"));
+        }
+
+        match self.response_receiver.recv() {
+            Ok(Responses::None) => Ok(()),
+            Ok(_) => Err(PyValueError::new_err(
+                "Expected None response internally but got value",
+            )),
+            Err(_) => {
+                return Err(PyValueError::new_err(
+                    "Failed to receive response from Light Arrangement thread",
+                ));
+            }
+        }
+    }
+
+    pub fn fill(&self, color: PythonColor) -> PyResult<()> {
+        let send_result = self.request_sender.send(Requests::Fill(color));
+        if let Err(_) = send_result {
             return Err(PyValueError::new_err("Unable to send request"));
         }
 
@@ -159,7 +214,20 @@ impl<const N: usize> LightArrangementThread<N> {
         }
     }
 
-    fn internal_response_error() -> PyErr {
-        PyValueError::new_err("Got wrong response internally from Light Arrangement thread")
+    pub fn show(&self) -> PyResult<()> {
+        let send_result = self.request_sender.send(Requests::Show);
+        if let Err(_) = send_result {
+            return Err(PyValueError::new_err("Unable to send request"));
+        }
+
+        match self.response_receiver.recv() {
+            Ok(Responses::None) => Ok(()),
+            Ok(_) => Err(PyValueError::new_err(
+                "Expected None response internally but got value",
+            )),
+            _ => Err(PyValueError::new_err(
+                "Got wrong response internally from Light Arrangement thread",
+            )),
+        }
     }
 }
