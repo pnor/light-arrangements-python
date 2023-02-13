@@ -33,8 +33,8 @@ use light_arrangement_python_obj::init_ws281x;
 // - get(index) -> Color
 // - set(index, color)
 //
-// - show()
-// - fill
+// - [x] show()
+// - [x] fill
 
 /// A Python module implemented in Rust.
 #[pymodule]

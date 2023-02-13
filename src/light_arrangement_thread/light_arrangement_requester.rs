@@ -197,6 +197,36 @@ impl<const N: usize> LightArrangementThread<N> {
         }
     }
 
+    pub fn set_decreasing_intensity_merge(
+        &self,
+        loc: &Loc<N>,
+        set_distance: f64,
+        color: PythonColor,
+    ) -> PyResult<()> {
+        let send_result = self
+            .request_sender
+            .send(Requests::SetDecreasingIntensityMerge(
+                loc.clone(),
+                set_distance,
+                color,
+            ));
+        if let Err(_) = send_result {
+            return Err(PyValueError::new_err("Unable to send request"));
+        }
+
+        match self.response_receiver.recv() {
+            Ok(Responses::None) => Ok(()),
+            Ok(_) => Err(PyValueError::new_err(
+                "Expected None response internally but got value",
+            )),
+            Err(_) => {
+                return Err(PyValueError::new_err(
+                    "Failed to receive response from Light Arrangement thread",
+                ));
+            }
+        }
+    }
+
     pub fn fill(&self, color: PythonColor) -> PyResult<()> {
         let send_result = self.request_sender.send(Requests::Fill(color));
         if let Err(_) = send_result {

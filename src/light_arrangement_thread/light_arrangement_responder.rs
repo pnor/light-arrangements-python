@@ -18,7 +18,6 @@ impl<const N: usize> LightArrangementThread<N> {
         let mut listening = true;
 
         while listening {
-            println!("listening...");
             let request = request_receiver.recv();
             match request {
                 Err(_) => {
@@ -50,6 +49,16 @@ impl<const N: usize> LightArrangementThread<N> {
                     }
                     Requests::SetDecreasingIntensity(loc, set_distance, color) => {
                         Self::thread_set_decreasing_intensity(
+                            &mut light_arrangement,
+                            &response_sender,
+                            &loc,
+                            set_distance,
+                            &color,
+                            &mut listening,
+                        )
+                    }
+                    Requests::SetDecreasingIntensityMerge(loc, set_distance, color) => {
+                        Self::thread_set_decreasing_intensity_merge(
                             &mut light_arrangement,
                             &response_sender,
                             &loc,
@@ -119,6 +128,21 @@ impl<const N: usize> LightArrangementThread<N> {
         listening: &mut bool,
     ) {
         light_arrangement.set_decreasing_intensity(&loc, set_distance, &vec_to_color(color));
+        if let Err(_) = response_sender.send(Responses::None) {
+            eprintln!("Error sending result!");
+            *listening = false;
+        }
+    }
+
+    fn thread_set_decreasing_intensity_merge<T: LightStrip>(
+        light_arrangement: &mut LightArrangement<T, N>,
+        response_sender: &Sender<Responses>,
+        loc: &Loc<N>,
+        set_distance: f64,
+        color: &PythonColor,
+        listening: &mut bool,
+    ) {
+        light_arrangement.set_decreasing_intensity_merge(&loc, set_distance, &vec_to_color(color));
         if let Err(_) = response_sender.send(Responses::None) {
             eprintln!("Error sending result!");
             *listening = false;

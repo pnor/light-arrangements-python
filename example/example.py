@@ -20,6 +20,21 @@ obj.set_decreasing_intensity_polar(0.4, [np.pi * 1.8], (0.5, 0.5), 0.3, (100, 25
 
 obj.get_closest_polar(0.2, [40], (0.5, 0.5), 0.2)
 
+# for i in range(200):
+#     obj.show()
+#     time.sleep(0.05)
+
+time.sleep(1)
+p = 0
 for i in range(200):
+    obj.fill((0, 0, 0))
+    p += 0.05
+    p %= 2 * np.pi
+
+    obj.set_decreasing_intensity_merge_polar(0.4, [p], (0.5, 0.5), 0.2, (255, 0, 0))
+    obj.set_decreasing_intensity_merge_polar(
+        0.4, [(2 * np.pi) - p], (0.5, 0.5), 0.2, (0, 0, 255)
+    )
+
     obj.show()
-    time.sleep(0.05)
+    # time.sleep(0.05)
