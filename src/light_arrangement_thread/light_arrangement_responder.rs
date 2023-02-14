@@ -125,10 +125,7 @@ impl<const N: usize> LightArrangementThread<N> {
                 Responses::OptionColorResponse(Some((color.red, color.green, color.blue)))
             }
         };
-        if response_sender.send(result).is_err() {
-            eprintln!("Error sending result!");
-            *listening = false;
-        }
+        send_response_print_error(response_sender, result, listening);
     }
 
     fn thread_get_by_index<T: LightStrip>(
@@ -137,18 +134,28 @@ impl<const N: usize> LightArrangementThread<N> {
         index: usize,
         listening: &mut bool,
     ) {
-        let color = light_arrangement.get_by_index(index);
-        if response_sender
-            .send(Responses::ColorResponse((
-                color.red,
-                color.green,
-                color.blue,
-            )))
-            .is_err()
-        {
-            eprintln!("Error sending result!");
-            *listening = false;
+        if index >= light_arrangement.number_lights() {
+            send_response_print_error(
+                response_sender,
+                Responses::Error(
+                    format!(
+                        "Index {} is out of bounds for light strip with {} lights",
+                        index,
+                        light_arrangement.number_lights()
+                    )
+                    .to_string(),
+                ),
+                listening,
+            );
+            return;
         }
+
+        let color = light_arrangement.get_by_index(index);
+        send_response_print_error(
+            response_sender,
+            Responses::ColorResponse((color.red, color.green, color.blue)),
+            listening,
+        );
     }
 
     fn thread_set_closest<T: LightStrip>(
@@ -160,10 +167,7 @@ impl<const N: usize> LightArrangementThread<N> {
         listening: &mut bool,
     ) {
         light_arrangement.set_closest(&loc, max_search_distance, &vec_to_color(color));
-        if let Err(_) = response_sender.send(Responses::None) {
-            eprintln!("Error sending result!");
-            *listening = false;
-        }
+        send_response_print_error(response_sender, Responses::None, listening);
     }
 
     fn thread_set_decreasing_intensity<T: LightStrip>(
@@ -175,10 +179,7 @@ impl<const N: usize> LightArrangementThread<N> {
         listening: &mut bool,
     ) {
         light_arrangement.set_decreasing_intensity(&loc, set_distance, &vec_to_color(color));
-        if let Err(_) = response_sender.send(Responses::None) {
-            eprintln!("Error sending result!");
-            *listening = false;
-        }
+        send_response_print_error(response_sender, Responses::None, listening);
     }
 
     fn thread_set_decreasing_intensity_merge<T: LightStrip>(
@@ -190,10 +191,7 @@ impl<const N: usize> LightArrangementThread<N> {
         listening: &mut bool,
     ) {
         light_arrangement.set_decreasing_intensity_merge(&loc, set_distance, &vec_to_color(color));
-        if let Err(_) = response_sender.send(Responses::None) {
-            eprintln!("Error sending result!");
-            *listening = false;
-        }
+        send_response_print_error(response_sender, Responses::None, listening);
     }
 
     fn thread_set_all_in_box<T: LightStrip>(
@@ -205,10 +203,7 @@ impl<const N: usize> LightArrangementThread<N> {
         listening: &mut bool,
     ) {
         light_arrangement.set_all_in_box(loc1, loc2, &vec_to_color(color));
-        if let Err(_) = response_sender.send(Responses::None) {
-            eprintln!("Error sending result!");
-            *listening = false;
-        }
+        send_response_print_error(response_sender, Responses::None, listening);
     }
 
     fn thread_set_all_in_radius<T: LightStrip>(
@@ -220,10 +215,7 @@ impl<const N: usize> LightArrangementThread<N> {
         listening: &mut bool,
     ) {
         light_arrangement.set_all_in_radius(loc, radius, &vec_to_color(color));
-        if let Err(_) = response_sender.send(Responses::None) {
-            eprintln!("Error sending result!");
-            *listening = false;
-        }
+        send_response_print_error(response_sender, Responses::None, listening);
     }
 
     fn thread_set_by_index<T: LightStrip>(
@@ -233,11 +225,24 @@ impl<const N: usize> LightArrangementThread<N> {
         color: &PythonColor,
         listening: &mut bool,
     ) {
-        light_arrangement.set_by_index(index, &vec_to_color(color));
-        if let Err(_) = response_sender.send(Responses::None) {
-            eprintln!("Error sending result!");
-            *listening = false;
+        if index >= light_arrangement.number_lights() {
+            send_response_print_error(
+                response_sender,
+                Responses::Error(
+                    format!(
+                        "Index {} is out of bounds for light strip with {} lights",
+                        index,
+                        light_arrangement.number_lights()
+                    )
+                    .to_string(),
+                ),
+                listening,
+            );
+            return;
         }
+
+        light_arrangement.set_by_index(index, &vec_to_color(color));
+        send_response_print_error(response_sender, Responses::None, listening);
     }
 
     fn thread_fill<T: LightStrip>(
@@ -247,10 +252,7 @@ impl<const N: usize> LightArrangementThread<N> {
         listening: &mut bool,
     ) {
         light_arrangement.fill(&vec_to_color(color));
-        if let Err(_) = response_sender.send(Responses::None) {
-            eprintln!("Error sending result!");
-            *listening = false;
-        }
+        send_response_print_error(response_sender, Responses::None, listening);
     }
 
     fn thread_show<T: LightStrip>(
@@ -259,9 +261,17 @@ impl<const N: usize> LightArrangementThread<N> {
         listening: &mut bool,
     ) {
         light_arrangement.show();
-        if let Err(_) = response_sender.send(Responses::None) {
-            eprintln!("Error sending result!");
-            *listening = false;
-        }
+        send_response_print_error(response_sender, Responses::None, listening);
+    }
+}
+
+fn send_response_print_error(
+    sender: &Sender<Responses>,
+    response: Responses,
+    listening: &mut bool,
+) {
+    if sender.send(response).is_err() {
+        eprintln!("Error sending result!");
+        *listening = false;
     }
 }

@@ -7,4 +7,5 @@ pub enum Responses {
     None,
     OptionColorResponse(Option<PythonReturnColor>),
     ColorResponse(PythonReturnColor),
+    Error(String),
 }

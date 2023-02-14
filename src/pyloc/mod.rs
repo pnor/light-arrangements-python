@@ -20,7 +20,7 @@ macro_rules! impl_pyloc_for_dimensions {
             impl $name {
                 #[classmethod]
                 pub fn cartesian(_cls: &PyType, coordinate: Vec<f64>) -> Vec<f64> {
-                        Loc::cartesian(vec_to_array::<$x>(coordinate)).coords.to_vec()
+                        Loc::cartesian(vec_to_array::<$x>(coordinate).unwrap()).coords.to_vec()
                 }
 
                 #[classmethod]
@@ -30,7 +30,7 @@ macro_rules! impl_pyloc_for_dimensions {
                     angular_coords: Vec<f64>,
                     center: Vec<f64>,
                 ) -> Vec<f64> {
-                    Loc::polar(rho, &angular_coords, &vec_to_array::<$x>(center)).coords.to_vec()
+                    Loc::polar(rho, &angular_coords, &vec_to_array::<$x>(center).unwrap()).coords.to_vec()
                 }
 
                 #[classmethod]
@@ -41,7 +41,7 @@ macro_rules! impl_pyloc_for_dimensions {
                     coords: Vec<f64>,
                     origin: Vec<f64>,
                 ) -> Vec<f64> {
-                        Loc::cylindrical(radius, theta, coords, &vec_to_array::<$x>(origin)).coords.to_vec()
+                        Loc::cylindrical(radius, theta, coords, &vec_to_array::<$x>(origin).unwrap()).coords.to_vec()
                 }
             }
         )*

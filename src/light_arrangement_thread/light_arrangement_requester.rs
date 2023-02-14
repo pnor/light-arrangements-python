@@ -4,7 +4,6 @@ use std::thread;
 use light_arrangements::{ArrangementConfig, LightStripConfig, TestStrip, TestStripDisplayConfig};
 use light_arrangements::{LightArrangement, LightArrangementError, LightStrip, Loc, RealStrip};
 use pyo3::exceptions::PyValueError;
-use pyo3::prelude::*;
 use pyo3::PyResult;
 
 use crate::types::{PythonColor, PythonReturnColor};
@@ -38,7 +37,11 @@ impl<const N: usize> LightArrangementThread<N> {
             let light_arrangement_res =
                 LightArrangement::new(strip_result.unwrap(), arrangement_config_result.unwrap());
             if let Ok(light_arrangement) = light_arrangement_res {
-                Self::light_arrangement_thread(light_arrangement, request_receiver, response_sender)
+                Self::light_arrangement_thread(
+                    light_arrangement,
+                    request_receiver,
+                    response_sender,
+                );
             } else {
                 eprintln!(
                     "Failed to create light arrangment: {}",
@@ -109,9 +112,9 @@ impl<const N: usize> LightArrangementThread<N> {
                 response_receiver,
             }),
             Ok(Responses::InitFailed) => Err(PyValueError::new_err(
-                "Failed to start light
-        arrangement thread!",
+                "Failed to start light arrangement thread!",
             )),
+            Ok(Responses::Error(reason)) => Err(PyValueError::new_err(reason)),
             Ok(_) => Err(PyValueError::new_err(
                 "Failed to start light arrangement thread; Internally returned wrong response",
             )),
@@ -135,6 +138,7 @@ impl<const N: usize> LightArrangementThread<N> {
 
         match self.response_receiver.recv() {
             Ok(Responses::OptionColorResponse(c)) => Ok(c),
+            Ok(Responses::Error(reason)) => Err(PyValueError::new_err(reason)),
             _ => Err(PyValueError::new_err(
                 "Got wrong response internally from Light Arrangement thread",
             )),
@@ -149,6 +153,7 @@ impl<const N: usize> LightArrangementThread<N> {
 
         match self.response_receiver.recv() {
             Ok(Responses::ColorResponse(c)) => Ok(c),
+            Ok(Responses::Error(reason)) => Err(PyValueError::new_err(reason)),
             _ => Err(PyValueError::new_err(
                 "Got wrong response internally from Light Arrangement thread",
             )),
@@ -172,6 +177,7 @@ impl<const N: usize> LightArrangementThread<N> {
 
         match self.response_receiver.recv() {
             Ok(Responses::None) => Ok(()),
+            Ok(Responses::Error(reason)) => Err(PyValueError::new_err(reason)),
             Ok(_) => Err(PyValueError::new_err(
                 "Expected None response internally but got value",
             )),
@@ -200,6 +206,7 @@ impl<const N: usize> LightArrangementThread<N> {
 
         match self.response_receiver.recv() {
             Ok(Responses::None) => Ok(()),
+            Ok(Responses::Error(reason)) => Err(PyValueError::new_err(reason)),
             Ok(_) => Err(PyValueError::new_err(
                 "Expected None response internally but got value",
             )),
@@ -230,6 +237,7 @@ impl<const N: usize> LightArrangementThread<N> {
 
         match self.response_receiver.recv() {
             Ok(Responses::None) => Ok(()),
+            Ok(Responses::Error(reason)) => Err(PyValueError::new_err(reason)),
             Ok(_) => Err(PyValueError::new_err(
                 "Expected None response internally but got value",
             )),
@@ -251,6 +259,7 @@ impl<const N: usize> LightArrangementThread<N> {
 
         match self.response_receiver.recv() {
             Ok(Responses::None) => Ok(()),
+            Ok(Responses::Error(reason)) => Err(PyValueError::new_err(reason)),
             Ok(_) => Err(PyValueError::new_err(
                 "Expected None response internally but got value",
             )),
@@ -272,6 +281,7 @@ impl<const N: usize> LightArrangementThread<N> {
 
         match self.response_receiver.recv() {
             Ok(Responses::None) => Ok(()),
+            Ok(Responses::Error(reason)) => Err(PyValueError::new_err(reason)),
             Ok(_) => Err(PyValueError::new_err(
                 "Expected None response internally but got value",
             )),
@@ -291,6 +301,7 @@ impl<const N: usize> LightArrangementThread<N> {
 
         match self.response_receiver.recv() {
             Ok(Responses::None) => Ok(()),
+            Ok(Responses::Error(reason)) => Err(PyValueError::new_err(reason)),
             Ok(_) => Err(PyValueError::new_err(
                 "Expected None response internally but got value",
             )),
@@ -310,6 +321,7 @@ impl<const N: usize> LightArrangementThread<N> {
 
         match self.response_receiver.recv() {
             Ok(Responses::None) => Ok(()),
+            Ok(Responses::Error(reason)) => Err(PyValueError::new_err(reason)),
             Ok(_) => Err(PyValueError::new_err(
                 "Expected None response internally but got value",
             )),
@@ -327,6 +339,7 @@ impl<const N: usize> LightArrangementThread<N> {
 
         match self.response_receiver.recv() {
             Ok(Responses::None) => Ok(()),
+            Ok(Responses::Error(reason)) => Err(PyValueError::new_err(reason)),
             Ok(_) => Err(PyValueError::new_err(
                 "Expected None response internally but got value",
             )),

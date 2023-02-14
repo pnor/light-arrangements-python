@@ -16,42 +16,42 @@ impl PyLightArrangement {
     ) -> PyResult<Option<PythonReturnColor>> {
         match &self.light_arr_enum {
             LightArrangementTypes::Test1D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<1>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<1>(coordinate)?);
                 let opt_color = arr.get_closest(&loc, max_search_distance)?;
                 return Ok(opt_color);
             }
             LightArrangementTypes::Test2D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<2>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<2>(coordinate)?);
                 let opt_color = arr.get_closest(&loc, max_search_distance)?;
                 return Ok(opt_color);
             }
             LightArrangementTypes::Test3D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<3>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<3>(coordinate)?);
                 let opt_color = arr.get_closest(&loc, max_search_distance)?;
                 return Ok(opt_color);
             }
             LightArrangementTypes::Test4D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<4>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<4>(coordinate)?);
                 let opt_color = arr.get_closest(&loc, max_search_distance)?;
                 return Ok(opt_color);
             }
             LightArrangementTypes::Ws281x1D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<1>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<1>(coordinate)?);
                 let opt_color = arr.get_closest(&loc, max_search_distance)?;
                 return Ok(opt_color);
             }
             LightArrangementTypes::Ws281x2D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<2>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<2>(coordinate)?);
                 let opt_color = arr.get_closest(&loc, max_search_distance)?;
                 return Ok(opt_color);
             }
             LightArrangementTypes::Ws281x3D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<3>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<3>(coordinate)?);
                 let opt_color = arr.get_closest(&loc, max_search_distance)?;
                 return Ok(opt_color);
             }
             LightArrangementTypes::Ws281x4D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<4>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<4>(coordinate)?);
                 let opt_color = arr.get_closest(&loc, max_search_distance)?;
                 return Ok(opt_color);
             }
@@ -103,42 +103,42 @@ impl PyLightArrangement {
     ) -> PyResult<()> {
         match &self.light_arr_enum {
             LightArrangementTypes::Test1D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<1>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<1>(coordinate)?);
                 let result = arr.set_closest(&loc, max_search_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test2D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<2>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<2>(coordinate)?);
                 let result = arr.set_closest(&loc, max_search_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test3D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<3>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<3>(coordinate)?);
                 let result = arr.set_closest(&loc, max_search_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test4D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<4>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<4>(coordinate)?);
                 let result = arr.set_closest(&loc, max_search_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x1D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<1>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<1>(coordinate)?);
                 let result = arr.set_closest(&loc, max_search_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x2D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<2>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<2>(coordinate)?);
                 let result = arr.set_closest(&loc, max_search_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x3D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<3>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<3>(coordinate)?);
                 let result = arr.set_closest(&loc, max_search_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x4D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<4>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<4>(coordinate)?);
                 let result = arr.set_closest(&loc, max_search_distance, color)?;
                 return Ok(result);
             }
@@ -153,42 +153,42 @@ impl PyLightArrangement {
     ) -> PyResult<()> {
         match &self.light_arr_enum {
             LightArrangementTypes::Test1D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<1>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<1>(coordinate)?);
                 let result = arr.set_decreasing_intensity(&loc, set_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test2D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<2>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<2>(coordinate)?);
                 let result = arr.set_decreasing_intensity(&loc, set_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test3D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<3>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<3>(coordinate)?);
                 let result = arr.set_decreasing_intensity(&loc, set_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test4D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<4>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<4>(coordinate)?);
                 let result = arr.set_decreasing_intensity(&loc, set_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x1D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<1>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<1>(coordinate)?);
                 let result = arr.set_decreasing_intensity(&loc, set_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x2D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<2>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<2>(coordinate)?);
                 let result = arr.set_decreasing_intensity(&loc, set_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x3D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<3>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<3>(coordinate)?);
                 let result = arr.set_decreasing_intensity(&loc, set_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x4D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<4>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<4>(coordinate)?);
                 let result = arr.set_decreasing_intensity(&loc, set_distance, color)?;
                 return Ok(result);
             }
@@ -203,42 +203,42 @@ impl PyLightArrangement {
     ) -> PyResult<()> {
         match &self.light_arr_enum {
             LightArrangementTypes::Test1D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<1>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<1>(coordinate)?);
                 let result = arr.set_decreasing_intensity_merge(&loc, set_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test2D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<2>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<2>(coordinate)?);
                 let result = arr.set_decreasing_intensity_merge(&loc, set_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test3D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<3>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<3>(coordinate)?);
                 let result = arr.set_decreasing_intensity_merge(&loc, set_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test4D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<4>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<4>(coordinate)?);
                 let result = arr.set_decreasing_intensity_merge(&loc, set_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x1D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<1>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<1>(coordinate)?);
                 let result = arr.set_decreasing_intensity_merge(&loc, set_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x2D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<2>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<2>(coordinate)?);
                 let result = arr.set_decreasing_intensity_merge(&loc, set_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x3D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<3>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<3>(coordinate)?);
                 let result = arr.set_decreasing_intensity_merge(&loc, set_distance, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x4D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<4>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<4>(coordinate)?);
                 let result = arr.set_decreasing_intensity_merge(&loc, set_distance, color)?;
                 return Ok(result);
             }
@@ -253,50 +253,50 @@ impl PyLightArrangement {
     ) -> PyResult<()> {
         match &self.light_arr_enum {
             LightArrangementTypes::Test1D(arr) => {
-                let loc1 = Loc::cartesian(vec_to_array(loc1));
-                let loc2 = Loc::cartesian(vec_to_array(loc2));
+                let loc1 = Loc::cartesian(vec_to_array(loc1)?);
+                let loc2 = Loc::cartesian(vec_to_array(loc2)?);
                 let result = arr.set_all_in_box(loc1, loc2, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test2D(arr) => {
-                let loc1 = Loc::cartesian(vec_to_array(loc1));
-                let loc2 = Loc::cartesian(vec_to_array(loc2));
+                let loc1 = Loc::cartesian(vec_to_array(loc1)?);
+                let loc2 = Loc::cartesian(vec_to_array(loc2)?);
                 let result = arr.set_all_in_box(loc1, loc2, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test3D(arr) => {
-                let loc1 = Loc::cartesian(vec_to_array(loc1));
-                let loc2 = Loc::cartesian(vec_to_array(loc2));
+                let loc1 = Loc::cartesian(vec_to_array(loc1)?);
+                let loc2 = Loc::cartesian(vec_to_array(loc2)?);
                 let result = arr.set_all_in_box(loc1, loc2, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test4D(arr) => {
-                let loc1 = Loc::cartesian(vec_to_array(loc1));
-                let loc2 = Loc::cartesian(vec_to_array(loc2));
+                let loc1 = Loc::cartesian(vec_to_array(loc1)?);
+                let loc2 = Loc::cartesian(vec_to_array(loc2)?);
                 let result = arr.set_all_in_box(loc1, loc2, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x1D(arr) => {
-                let loc1 = Loc::cartesian(vec_to_array(loc1));
-                let loc2 = Loc::cartesian(vec_to_array(loc2));
+                let loc1 = Loc::cartesian(vec_to_array(loc1)?);
+                let loc2 = Loc::cartesian(vec_to_array(loc2)?);
                 let result = arr.set_all_in_box(loc1, loc2, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x2D(arr) => {
-                let loc1 = Loc::cartesian(vec_to_array(loc1));
-                let loc2 = Loc::cartesian(vec_to_array(loc2));
+                let loc1 = Loc::cartesian(vec_to_array(loc1)?);
+                let loc2 = Loc::cartesian(vec_to_array(loc2)?);
                 let result = arr.set_all_in_box(loc1, loc2, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x3D(arr) => {
-                let loc1 = Loc::cartesian(vec_to_array(loc1));
-                let loc2 = Loc::cartesian(vec_to_array(loc2));
+                let loc1 = Loc::cartesian(vec_to_array(loc1)?);
+                let loc2 = Loc::cartesian(vec_to_array(loc2)?);
                 let result = arr.set_all_in_box(loc1, loc2, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x4D(arr) => {
-                let loc1 = Loc::cartesian(vec_to_array(loc1));
-                let loc2 = Loc::cartesian(vec_to_array(loc2));
+                let loc1 = Loc::cartesian(vec_to_array(loc1)?);
+                let loc2 = Loc::cartesian(vec_to_array(loc2)?);
                 let result = arr.set_all_in_box(loc1, loc2, color)?;
                 return Ok(result);
             }
@@ -311,42 +311,42 @@ impl PyLightArrangement {
     ) -> PyResult<()> {
         match &self.light_arr_enum {
             LightArrangementTypes::Test1D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<1>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<1>(coordinate)?);
                 let result = arr.set_all_in_radius(loc, radius, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test2D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<2>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<2>(coordinate)?);
                 let result = arr.set_all_in_radius(loc, radius, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test3D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<3>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<3>(coordinate)?);
                 let result = arr.set_all_in_radius(loc, radius, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Test4D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<4>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<4>(coordinate)?);
                 let result = arr.set_all_in_radius(loc, radius, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x1D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<1>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<1>(coordinate)?);
                 let result = arr.set_all_in_radius(loc, radius, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x2D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<2>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<2>(coordinate)?);
                 let result = arr.set_all_in_radius(loc, radius, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x3D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<3>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<3>(coordinate)?);
                 let result = arr.set_all_in_radius(loc, radius, color)?;
                 return Ok(result);
             }
             LightArrangementTypes::Ws281x4D(arr) => {
-                let loc = Loc::cartesian(vec_to_array::<4>(coordinate));
+                let loc = Loc::cartesian(vec_to_array::<4>(coordinate)?);
                 let result = arr.set_all_in_radius(loc, radius, color)?;
                 return Ok(result);
             }
