@@ -1,46 +1,19 @@
 #!/usr/bin/env python3
 
-import light_arrangements_python
+import light_arrangements_python as light
 import time
 import numpy as np
 
-obj = light_arrangements_python.init_test(
-    2, "./example/positions2d.csv", 0.03, (0.5, 0.5, 2), [0, 1, 2]
-)
+obj = light.init_test(2, "./example/positions2d.csv", 0.03, (0.5, 0.5, 2), [0, 1, 2])
 
 obj.fill((25, 25, 25))
 
-obj.set_closest_polar(0.1, [0], (0.5, 0.5), 0.2, (255, 0, 0))
-obj.set_closest_polar(0.2, [np.pi], (0.5, 0.5), 0.2, (0, 255, 255))
-obj.set_closest_polar(0.3, [np.pi / 2], (0.5, 0.5), 0.2, (255, 0, 255))
-obj.set_closest_polar(0.4, [np.pi * 1.5], (0.5, 0.5), 0.2, (0, 0, 255))
 
-obj.set_decreasing_intensity_polar(0.4, [np.pi * 1.8], (0.5, 0.5), 0.3, (100, 255, 200))
+obj.set_closest(light.Loc2.cartesian([0.2, 0.2]), 0.2, (255, 0, 0))
 
 
-print("=-=-=")
-obj.set_closest_polar(0.2, [40], (0.5, 0.5), 0.2, (123, 0, 0))
-print(obj.get_closest_polar(0.2, [40], (0.5, 0.5), 0.2))
-
-obj.set_closest_cartesian([0, 0], 0.2, (0, 123, 0))
-print(obj.get_closest_cartesian([0, 0], 0.2))
-
-obj.set_closest_cylindrical(0, 0, [], (0.5, 0.5), 0.2, (0, 0, 123))
-print(obj.get_closest_cylindrical(0, 0, [], (0.5, 0.5), 0.2))
-print("=-=-=")
-
-obj.set_all_in_box([0, 0], [0.4, 0.4], (150, 150, 0))
-obj.set_all_in_radius_polar(0.0, [0], (1, 1), 0.3, (0, 150, 150))
-obj.set_by_index(0, (255, 255, 255))
-obj.set_by_index(1, (255, 255, 255))
-obj.set_by_index(2, (255, 255, 255))
-print(obj.get_by_index(2))
-print("-------")
 obj.show()
 
-# for i in range(200):
-#     obj.show()
-#     time.sleep(0.05)
 
 time.sleep(1)
 p = 0
@@ -49,10 +22,11 @@ for i in range(200):
     p += 0.05
     p %= 2 * np.pi
 
-    obj.set_decreasing_intensity_merge_polar(0.4, [p], (0.5, 0.5), 0.2, (255, 0, 0))
-    obj.set_decreasing_intensity_merge_polar(
-        0.4, [(2 * np.pi) - p], (0.5, 0.5), 0.2, (0, 0, 255)
-    )
+    loc_a = light.Loc2.polar(0.4, [p], (0.5, 0.5))
+    loc_b = light.Loc2.polar(0.4, [(2 * np.pi) - p], (0.5, 0.5))
+
+    obj.set_decreasing_intensity_merge(loc_a, 0.2, (255, 0, 0))
+    obj.set_decreasing_intensity_merge(loc_b, 0.2, (0, 255, 0))
 
     obj.show()
     # time.sleep(0.05)

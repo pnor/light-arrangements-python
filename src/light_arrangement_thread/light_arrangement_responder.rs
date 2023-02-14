@@ -105,10 +105,6 @@ impl<const N: usize> LightArrangementThread<N> {
                     Requests::Show => {
                         Self::thread_show(&mut light_arrangement, &response_sender, &mut listening)
                     }
-                    _ => {
-                        eprintln!("unimplemented");
-                        listening = false;
-                    }
                 },
             }
         }

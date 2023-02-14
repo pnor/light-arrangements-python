@@ -12,3 +12,6 @@ classifiers = [
 ]
 
 
+[tool.pyright]
+include = ["example"]
+exclude = ["src"]

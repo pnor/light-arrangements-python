@@ -7,6 +7,7 @@ edition = "2021"
 [lib]
 name = "light_arrangements_python"
 crate-type = ["cdylib"]
+proc-macro = true
 
 [dependencies]
 pyo3 = { version = "0.18.0", features = ["extension-module"] }
