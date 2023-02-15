@@ -13,7 +13,7 @@ def get_light_arrangements():
     )
 
 
-class GetSet(unittest.TestCase):
+class TestFill(unittest.TestCase):
     def test_fill(self):
         color = (100, 100, 100)
         arr = get_light_arrangements()
@@ -26,6 +26,8 @@ class GetSet(unittest.TestCase):
         for i in range(NUMBER_LIGHTS):
             assert arr.get_by_index(i) == color
 
+
+class GetSet(unittest.TestCase):
     def test_get_and_set_by_index(self):
         color = (100, 100, 100)
         arr = get_light_arrangements()
@@ -151,6 +153,12 @@ class Show(unittest.TestCase):
     def test_show(self):
         arr = get_light_arrangements()
         arr.show()
+
+
+class NumberLights(unittest.TestCase):
+    def test_number(self):
+        arr = get_light_arrangements()
+        self.assertTrue(arr.number_lights(), 100)
 
 
 if __name__ == "__main__":

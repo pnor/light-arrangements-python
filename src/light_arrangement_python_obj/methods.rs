@@ -463,4 +463,33 @@ impl PyLightArrangement {
             }
         }
     }
+
+    pub fn number_lights(&self) -> PyResult<i32> {
+        match &self.light_arr_enum {
+            LightArrangementTypes::Test1D(arr) => {
+                return Ok(arr.number_lights());
+            }
+            LightArrangementTypes::Test2D(arr) => {
+                return Ok(arr.number_lights());
+            }
+            LightArrangementTypes::Test3D(arr) => {
+                return Ok(arr.number_lights());
+            }
+            LightArrangementTypes::Test4D(arr) => {
+                return Ok(arr.number_lights());
+            }
+            LightArrangementTypes::Ws281x1D(arr) => {
+                return Ok(arr.number_lights());
+            }
+            LightArrangementTypes::Ws281x2D(arr) => {
+                return Ok(arr.number_lights());
+            }
+            LightArrangementTypes::Ws281x3D(arr) => {
+                return Ok(arr.number_lights());
+            }
+            LightArrangementTypes::Ws281x4D(arr) => {
+                return Ok(arr.number_lights());
+            }
+        }
+    }
 }

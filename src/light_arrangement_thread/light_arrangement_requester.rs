@@ -20,6 +20,7 @@ impl<const N: usize> LightArrangementThread<N> {
     ) -> Result<Self, LightArrangementError> {
         let (request_sender, request_receiver) = channel();
         let (response_sender, response_receiver) = channel();
+        let number_lights = strip_config.number_lights;
 
         thread::spawn(move || {
             let strip_result = T::new(strip_config);
@@ -53,6 +54,7 @@ impl<const N: usize> LightArrangementThread<N> {
         return Ok(Self {
             request_sender,
             response_receiver,
+            number_lights,
         });
     }
 
@@ -61,18 +63,22 @@ impl<const N: usize> LightArrangementThread<N> {
         let (request_sender, request_receiver) = channel();
         let (response_sender, response_receiver) = channel();
 
+        let arrangement_config_result = ArrangementConfig::from_csv(&input_file);
+        if let Err(_) = arrangement_config_result {
+            return Err(PyValueError::new_err(
+                "Failed to create arrangement from csv file",
+            ));
+        }
+
+        let number_lights = arrangement_config_result
+            .as_ref()
+            .unwrap()
+            .light_locations
+            .len() as i32;
+
         thread::spawn(move || {
-            let arrangement_config_result = ArrangementConfig::from_csv(&input_file);
-            if let Err(error) = arrangement_config_result {
-                eprintln!("Failed to create arrangement: {}", error.reason());
-                if response_sender.send(Responses::InitFailed).is_err() {
-                    eprintln!(
-                        "Failed to send back to main thread that light arrangement thread
-                failed to start"
-                    );
-                }
-                return;
-            }
+            // Move the arrangement into the new thread
+            let arrangement_config_result = arrangement_config_result;
 
             let test_strip = TestStrip::new(
                 &arrangement_config_result.as_ref().unwrap(),
@@ -110,6 +116,7 @@ impl<const N: usize> LightArrangementThread<N> {
             Ok(Responses::InitOk) => Ok(Self {
                 request_sender,
                 response_receiver,
+                number_lights,
             }),
             Ok(Responses::InitFailed) => Err(PyValueError::new_err(
                 "Failed to start light arrangement thread!",
@@ -347,5 +354,9 @@ impl<const N: usize> LightArrangementThread<N> {
                 "Got wrong response internally from Light Arrangement thread",
             )),
         }
+    }
+
+    pub fn number_lights(&self) -> i32 {
+        self.number_lights
     }
 }

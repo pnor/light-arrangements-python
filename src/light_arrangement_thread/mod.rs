@@ -13,6 +13,7 @@ use self::{requests::Requests, responses::Responses};
 pub struct LightArrangementThread<const N: usize> {
     request_sender: Sender<Requests<N>>,
     response_receiver: Receiver<Responses>,
+    number_lights: i32,
 }
 
 impl<const N: usize> Drop for LightArrangementThread<N> {
