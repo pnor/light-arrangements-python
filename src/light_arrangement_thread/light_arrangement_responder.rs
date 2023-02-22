@@ -265,6 +265,7 @@ impl<const N: usize> LightArrangementThread<N> {
     }
 }
 
+/// Sends `response` through `sender`, printing the error and stopping the thread if it fails
 fn send_response_print_error(
     sender: &Sender<Responses>,
     response: Responses,

@@ -1,12 +1,27 @@
 use pyo3::prelude::*;
 
+use crate::errors::to_pyresult;
 use crate::light_arrangement_thread::LightArrangementThread;
+use crate::types::PythonColor;
+use crate::{types::PythonReturnColor, util::vec_to_array};
 
-mod init;
-mod methods;
+use light_arrangements::LightStripConfig;
+use light_arrangements::Loc;
+use light_arrangements::TestStripDisplayConfig;
+use light_arrangements::Ws281xStrip;
+use pyo3::exceptions::PyValueError;
 
-pub use init::init_test;
-pub use init::init_ws281x;
+mod init_macro;
+mod methods_macro;
+
+use crate::impl_init_test_for_dimensions;
+use crate::impl_init_ws281x_for_dimensions;
+use crate::impl_methods_for_dimensions;
+
+#[pyclass]
+pub struct PyLightArrangement {
+    light_arr_enum: LightArrangementTypes,
+}
 
 pub enum LightArrangementTypes {
     Test1D(LightArrangementThread<1>),
@@ -19,7 +34,16 @@ pub enum LightArrangementTypes {
     Ws281x4D(LightArrangementThread<4>),
 }
 
-#[pyclass]
-pub struct PyLightArrangement {
-    light_arr_enum: LightArrangementTypes,
-}
+impl_init_test_for_dimensions!((1, Test1D), (2, Test2D), (3, Test3D), (4, Test4D));
+impl_init_ws281x_for_dimensions!((1, Ws281x1D), (2, Ws281x2D), (3, Ws281x3D), (4, Ws281x4D));
+
+impl_methods_for_dimensions!(
+    (1, Test1D),
+    (2, Test2D),
+    (3, Test3D),
+    (4, Test4D),
+    (1, Ws281x1D),
+    (2, Ws281x2D),
+    (3, Ws281x3D),
+    (4, Ws281x4D)
+);

@@ -29,7 +29,7 @@ impl<const N: usize> LightArrangementThread<N> {
                 return;
             }
 
-            let arrangement_config_result = ArrangementConfig::from_csv(&input_file);
+            let arrangement_config_result = ArrangementConfig::from_csv(&input_file, 100);
             if let Err(error) = arrangement_config_result {
                 eprintln!("Failed to create arrangement: {}", error.reason());
                 return;
@@ -63,7 +63,7 @@ impl<const N: usize> LightArrangementThread<N> {
         let (request_sender, request_receiver) = channel();
         let (response_sender, response_receiver) = channel();
 
-        let arrangement_config_result = ArrangementConfig::from_csv(&input_file);
+        let arrangement_config_result = ArrangementConfig::from_csv(&input_file, 100);
         if let Err(_) = arrangement_config_result {
             return Err(PyValueError::new_err(
                 "Failed to create arrangement from csv file",
