@@ -17,6 +17,7 @@ impl<const N: usize> LightArrangementThread<N> {
     pub fn new<T: LightStrip + RealStrip>(
         strip_config: LightStripConfig,
         input_file: String,
+        number_children_for_division: usize,
     ) -> Result<Self, LightArrangementError> {
         let (request_sender, request_receiver) = channel();
         let (response_sender, response_receiver) = channel();
@@ -29,7 +30,8 @@ impl<const N: usize> LightArrangementThread<N> {
                 return;
             }
 
-            let arrangement_config_result = ArrangementConfig::from_csv(&input_file, 100);
+            let arrangement_config_result =
+                ArrangementConfig::from_csv(&input_file, number_children_for_division);
             if let Err(error) = arrangement_config_result {
                 eprintln!("Failed to create arrangement: {}", error.reason());
                 return;
@@ -59,11 +61,16 @@ impl<const N: usize> LightArrangementThread<N> {
     }
 
     /// Spawns a new thread with a Test Strip, returning the object to control it
-    pub fn test(test_strip_config: TestStripDisplayConfig, input_file: String) -> PyResult<Self> {
+    pub fn test(
+        test_strip_config: TestStripDisplayConfig,
+        input_file: String,
+        number_children_for_division: usize,
+    ) -> PyResult<Self> {
         let (request_sender, request_receiver) = channel();
         let (response_sender, response_receiver) = channel();
 
-        let arrangement_config_result = ArrangementConfig::from_csv(&input_file, 100);
+        let arrangement_config_result =
+            ArrangementConfig::from_csv(&input_file, number_children_for_division);
         if let Err(_) = arrangement_config_result {
             return Err(PyValueError::new_err(
                 "Failed to create arrangement from csv file",

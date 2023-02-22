@@ -9,7 +9,7 @@ NUMBER_LIGHTS = 100
 
 def get_light_arrangements():
     return light_arrangements_python.init_test(
-        2, "./tests/positions2d.csv", 0.03, (0.5, 0.5, 2), [0, 1, 2]
+        2, "./tests/positions2d.csv", 10, 0.03, (0.5, 0.5, 2), [0, 1, 2]
     )
 
 

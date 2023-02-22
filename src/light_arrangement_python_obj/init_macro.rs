@@ -8,6 +8,7 @@ macro_rules! impl_init_test_for_dimensions {
         pub fn init_test(
             number_dimensions: usize,
             input_file: String,
+            number_children_for_division: usize,
             sphere_size: f32,
             camera_start: (f32, f32, f32),
             dimension_mask: [u8; 3],
@@ -18,7 +19,7 @@ macro_rules! impl_init_test_for_dimensions {
                 $(
                     $n => {
                         let light_arr_threading =
-                            LightArrangementThread::<$n>::test(test_display_config, input_file)?;
+                            LightArrangementThread::<$n>::test(test_display_config, input_file, number_children_for_division)?;
                         Ok(PyLightArrangement {
                             light_arr_enum: LightArrangementTypes::$name(light_arr_threading),
                         })
@@ -43,6 +44,7 @@ macro_rules! impl_init_ws281x_for_dimensions {
         pub fn init_ws281x(
             number_dimensions: usize,
             input_file: String,
+            number_children_for_division: usize,
             number_lights: i32,
             io_pin: i32,
         ) -> PyResult<PyLightArrangement> {
@@ -51,7 +53,7 @@ macro_rules! impl_init_ws281x_for_dimensions {
                 $(
                     $n => {
                         let light_arr_threading = to_pyresult(
-                            LightArrangementThread::<$n>::new::<Ws281xStrip>(strip_config, input_file),
+                            LightArrangementThread::<$n>::new::<Ws281xStrip>(strip_config, input_file, number_children_for_division),
                         )?;
                         Ok(PyLightArrangement {
                             light_arr_enum: LightArrangementTypes::$name(light_arr_threading),
