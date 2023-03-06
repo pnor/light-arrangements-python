@@ -5,6 +5,7 @@ use crate::light_arrangement_thread::LightArrangementThread;
 use crate::types::PythonColor;
 use crate::{types::PythonReturnColor, util::vec_to_array};
 
+use light_arrangements::ColorOrder;
 use light_arrangements::LightStripConfig;
 use light_arrangements::Loc;
 use light_arrangements::TestStripDisplayConfig;

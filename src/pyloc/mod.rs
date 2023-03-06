@@ -11,7 +11,7 @@ macro_rules! impl_pyloc_for_dimensions {
 
     ( $( ($x:expr, $name:ident, $python_name:expr) ),* ) => {
         $(
-            #[pyclass(name=$python_name)]
+            #[pyclass(name=$python_name, freelist=3)]
             pub struct $name {
                 pub loc: Loc<$x>,
             }

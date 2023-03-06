@@ -13,6 +13,25 @@ def get_light_arrangements():
     )
 
 
+class TestWs281xConstructor(unittest.TestCase):
+    def test_construct_ws281x(self):
+        arr = light_arrangements_python.init_ws281x(
+            2, "./tests/positions2d.csv", 10, 100, 18, 125, "rgb", 800000
+        )
+
+    def test_construct_ws281x_bad_rgb(self):
+        with self.assertRaises(ValueError):
+            light_arrangements_python.init_ws281x(
+                2, "./tests/positions2d.csv", 10, 100, 18, 125, "?", 800000
+            )
+            light_arrangements_python.init_ws281x(
+                2, "./tests/positions2d.csv", 10, 100, 18, 125, "rbb", 800000
+            )
+            light_arrangements_python.init_ws281x(
+                2, "./tests/positions2d.csv", 10, 100, 18, 125, "rgbg", 800000
+            )
+
+
 class TestFill(unittest.TestCase):
     def test_fill(self):
         color = (100, 100, 100)

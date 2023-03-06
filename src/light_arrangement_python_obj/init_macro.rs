@@ -47,8 +47,28 @@ macro_rules! impl_init_ws281x_for_dimensions {
             number_children_for_division: usize,
             number_lights: i32,
             io_pin: i32,
+            brightness: u8,
+            pixel_order: String,
+            frequency: u32,
         ) -> PyResult<PyLightArrangement> {
-            let strip_config = LightStripConfig::new(number_lights, io_pin);
+            let order = match pixel_order.as_str() {
+                "rgb" => Ok(ColorOrder::Rgb),
+                "rbg" => Ok(ColorOrder::Rbg),
+                "grb" => Ok(ColorOrder::Grb),
+                "gbr" => Ok(ColorOrder::Gbr),
+                "brg" => Ok(ColorOrder::Brg),
+                "bgr" => Ok(ColorOrder::Bgr),
+                _ => Err(PyValueError::new_err(
+                        format!("Format string \"{}\" doesn't correspond to a color order; should be
+a 3 character string, like \"rgb\" or \"brg\"", pixel_order.as_str()),
+                    ))
+            };
+            if let Err(e) = order {
+                return Err(e);
+            }
+
+            let strip_config = LightStripConfig::new(number_lights, io_pin, brightness, order.unwrap(), frequency);
+
             return match number_dimensions {
                 $(
                     $n => {
